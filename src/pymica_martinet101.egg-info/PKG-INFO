@@ -2,11 +2,11 @@ Metadata-Version: 2.1
 Name: pymica-martinet101
 Version: 1.0
 Summary: Apply mica background to Windows 11 windows
-Home-page: https://github.com/pypa/sampleproject
+Home-page: https://github.com/martinet101/pymica/
 Author: Martí Climent
 Author-email: marticlilop@gmail.com
 License: UNKNOWN
-Project-URL: Bug Tracker, https://github.com/pypa/sampleproject/issues
+Project-URL: Bug Tracker, https://github.com/martinet101/pymica/issues
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
