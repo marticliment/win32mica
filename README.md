@@ -1,8 +1,10 @@
-# PyMica: A simple module to add the Mica effect on legacy python windows
-The aim of this project is to apply the Mica effect on python applications made with Python, like Tkinter, PyQt/PySide, WxPython, Kivy, etc.<br>
+
 ![](https://img.shields.io/pypi/wheel/pymica-martinet101?style=for-the-badge)
 ![](https://img.shields.io/pypi/v/pymica-martinet101?style=for-the-badge)
 ![](https://img.shields.io/pypi/l/pymica-martinet101?style=for-the-badge)
+# PyMica: A simple module to add the Mica effect on legacy python windows
+The aim of this project is to apply the Mica effect on python applications made with Python, like Tkinter, PyQt/PySide, WxPython, Kivy, etc.<br>
+
 ## Installation:
 ```pwsh
 python -m pip install pymica-martinet101
