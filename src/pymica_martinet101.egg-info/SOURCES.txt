@@ -1,0 +1,9 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/pymica/__init__.py
+src/pymica_martinet101.egg-info/PKG-INFO
+src/pymica_martinet101.egg-info/SOURCES.txt
+src/pymica_martinet101.egg-info/dependency_links.txt
+src/pymica_martinet101.egg-info/top_level.txt

@@ -1,0 +1,51 @@
+Metadata-Version: 2.1
+Name: pymica-martinet101
+Version: 1.0
+Summary: Apply mica background to Windows 11 windows
+Home-page: https://github.com/pypa/sampleproject
+Author: Martí Climent
+Author-email: marticlilop@gmail.com
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/pypa/sampleproject/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: Windows
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# PyMica: A simple module to add the Mica effect on legacy python windows
+The aim of this project is to apply the Mica effect on python applications made with Python, like Tkinter, PyQt/PySide, WxPython, Kivy, etc.
+
+## Requirements:
+ - Windows 11
+ - A **frameless** window (It might work with a normal window, bit it is not guaranteed.)
+ - The HWND (identifier) of that window
+ - The window must have semi-transparent widgets/controls in order to recreate the transparency effect. More info: [what is a hwnd?](https://stackoverflow.com/questions/1635645/what-is-hwnd-in-vc) 
+ - Know if Windows has dark or light mode enabled. This can be checked with the [`darkdetect` module](https://pypi.org/project/darkdetect/)
+
+## Usage:
+
+```python
+
+hwnd = qtwindow.winId() # On a PyQt/PySide window
+hwnd = tkwindow.frame() # On a tkinter window
+# You'll need to adjust this to your program
+
+import pymica
+
+isDark = True  # Dark mode mica effect
+isDark = False # Light mode mica effect
+
+import darkdetect # Auto detect
+isDark = darkdetect.isDark()
+
+pymica.ApplyMica(hwnd, darkMode=isDark)
+```
+
+## Result:
+
+![Demo](img/demo.png)
+
+
