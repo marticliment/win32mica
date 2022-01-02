@@ -1,6 +1,11 @@
 # PyMica: A simple module to add the Mica effect on legacy python windows
 The aim of this project is to apply the Mica effect on python applications made with Python, like Tkinter, PyQt/PySide, WxPython, Kivy, etc.
 
+## Installation:
+```pwsh
+python -m pip install pymica-martinet101
+```
+
 ## Requirements:
  - Windows 11
  - A **frameless** window (It might work with a normal window, bit it is not guaranteed.)
