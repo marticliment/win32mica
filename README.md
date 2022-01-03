@@ -7,7 +7,7 @@ The aim of this project is to apply the Mica effect on python applications made 
 
 ## Installation:
 ```pwsh
-python -m pip install pymica-martinet101
+python -m pip install win32mica
 ```
 
 ## Requirements:
