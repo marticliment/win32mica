@@ -2,7 +2,7 @@
 ![](https://img.shields.io/pypi/wheel/pymica-martinet101?style=for-the-badge)
 ![](https://img.shields.io/pypi/v/pymica-martinet101?style=for-the-badge)
 ![](https://img.shields.io/pypi/l/pymica-martinet101?style=for-the-badge)
-# Py-Mica: A simple module to add the Mica effect on legacy python windows
+# win32mica (also known as PyMica): A simple module to add the Mica effect on legacy python windows
 The aim of this project is to apply the Mica effect on python applications made with Python, like Tkinter, PyQt/PySide, WxPython, Kivy, etc.<br>
 
 ## Installation:
@@ -25,7 +25,7 @@ hwnd = qtwindow.winId() # On a PyQt/PySide window
 hwnd = tkwindow.frame() # On a tkinter window
 # You'll need to adjust this to your program
 
-import pymica
+import win32mica
 
 isDark = True  # Dark mode mica effect
 isDark = False # Light mode mica effect
@@ -33,7 +33,7 @@ isDark = False # Light mode mica effect
 import darkdetect # Auto detect
 isDark = darkdetect.isDark()
 
-pymica.ApplyMica(hwnd, darkMode=isDark)
+win32mica.ApplyMica(hwnd, darkMode=isDark)
 ```
 
 ## Result:
