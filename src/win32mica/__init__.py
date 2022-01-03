@@ -1,5 +1,9 @@
 import ctypes, sys, platform
 
+class MICAMODE():
+    DARK = True
+    LIGHT = False
+
 
 def ApplyMica(HWND: int, darkMode: bool):
     if sys.platform == "win32" and sys.getwindowsversion().build >= 22000:
@@ -44,4 +48,3 @@ def ApplyMica(HWND: int, darkMode: bool):
         raise OSError(f"{sys.platform} version {sys.getwindowsversion().build} is not supported")
 
 
-ApplyMica(0, False)
