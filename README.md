@@ -25,15 +25,15 @@ hwnd = qtwindow.winId() # On a PyQt/PySide window
 hwnd = tkwindow.frame() # On a tkinter window
 # You'll need to adjust this to your program
 
-import win32mica
+from win32mica import MICAMODE, ApplyMica
 
-isDark = True  # Dark mode mica effect
-isDark = False # Light mode mica effect
+mode = MICAMODE.DARK  # Dark mode mica effect
+mode = MICAMODE.LIGHT # Light mode mica effect
 
-import darkdetect # Auto detect
-isDark = darkdetect.isDark()
+import darkdetect # Auto mode detect
+mode = darkdetect.isDark()
 
-win32mica.ApplyMica(hwnd, darkMode=isDark)
+win32mica.ApplyMica(hwnd, mode)
 ```
 
 ## Result:
