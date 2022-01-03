@@ -39,3 +39,4 @@ win32mica.ApplyMica(hwnd, darkMode=isDark)
 ## Result:
 
 ![Demo](https://github.com/martinet101/pymica/blob/main/img/demo.png?raw=true)
+_This is a PySide2 window with custom transparent widgets. The screenshot has been taken on dark mode._
