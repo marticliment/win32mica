@@ -5,6 +5,8 @@
 # Win32mica (aka PyMica): A simple module to add the Mica effect on legacy python windows
 The aim of this project is to apply the Mica effect on python applications made with Python, like Tkinter, PyQt/PySide, WxPython, Kivy, etc.<br>
 
+View this project also on [PyPi](https://pypi.org/project/win32mica/)
+
 ## Installation:
 ```pwsh
 python -m pip install win32mica
