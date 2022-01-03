@@ -1,0 +1,9 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/win32mica/__init__.py
+src/win32mica.egg-info/PKG-INFO
+src/win32mica.egg-info/SOURCES.txt
+src/win32mica.egg-info/dependency_links.txt
+src/win32mica.egg-info/top_level.txt
