@@ -16,7 +16,7 @@ python -m pip install win32mica
 
 ## Requirements:
  - Windows 11
- - A **frameless** window (It might work with a normal window, bit it is not guaranteed.)
+ - A **frameless** window (It might work with a normal window, but nothing is guaranteed.)
  - The HWND (identifier) of that window. More info: [what is a hwnd?](https://stackoverflow.com/questions/1635645/what-is-hwnd-in-vc) 
  - The window must have semi-transparent widgets/controls in order to recreate the transparency effect.
  - Know if Windows has dark or light mode enabled. This can be checked with the [`darkdetect` module](https://pypi.org/project/darkdetect/)
