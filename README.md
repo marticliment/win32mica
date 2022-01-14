@@ -16,7 +16,7 @@ python -m pip install win32mica
 
 ## Requirements:
  - Windows 11
- - A **frameless** window (It might work with a normal window, but nothing is guaranteed.)
+ - A window set to not have a transparent background and to have extended composition enabled* (It might work with other settings, but nothing is guaranteed.)
  - The HWND (identifier) of that window. More info: [what is a hwnd?](https://stackoverflow.com/questions/1635645/what-is-hwnd-in-vc) 
  - The window must have semi-transparent widgets/controls in order to recreate the transparency effect.
  - Know if Windows has dark or light mode enabled. This can be checked with the [`darkdetect` module](https://pypi.org/project/darkdetect/)
@@ -25,7 +25,7 @@ python -m pip install win32mica
 
 ```python
 
-hwnd = qtwindow.winId() # On a PyQt/PySide window
+hwnd = qtwindow.winId().__int__() # On a PyQt/PySide window
 hwnd = tkwindow.frame() # On a tkinter window
 # You'll need to adjust this to your program
 
@@ -44,3 +44,14 @@ win32mica.ApplyMica(hwnd, mode)
 
 ![Demo](https://github.com/martinet101/pymica/blob/main/img/demo.png?raw=true)<br>
 _This is a PySide2 window with custom transparent widgets. The screenshot has been taken on dark mode._
+
+
+* A window with transparent background means a window where the background widget is transparent. The window must also have, in the case of Qt, those flags enabled:
+```
+qtwindow.setAttribute(Qt.WA_TranslucentBackground)
+if QtWin.isCompositionEnabled():
+    QtWin.extendFrameIntoClientArea(qtwindow, -1, -1, -1, -1)
+else:
+    QtWin.resetExtendedFrame(qtwindow)
+``` 
+Other approaches might need to be made for other GUI toolkits to work
