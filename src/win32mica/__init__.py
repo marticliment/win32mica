@@ -32,6 +32,13 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
                 ("SizeOfData", ctypes.c_size_t)
             ]
 
+        class _MARGINS(ctypes.Structure):
+            _fields_ = [("cxLeftWidth", ctypes.c_int),
+                        ("cxRightWidth", ctypes.c_int),
+                        ("cyTopHeight", ctypes.c_int),
+                        ("cyBottomHeight", ctypes.c_int)
+                        ]
+
         DWM_UNDOCUMENTED_MICA_ENTRY = 1029 # Undocumented MICA (Windows 11 22523-)
         DWM_UNDOCUMENTED_MICA_VALUE = 0x01 # Undocumented MICA (Windows 11 22523-)
         
@@ -41,21 +48,36 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
 
         SetWindowCompositionAttribute = user32.SetWindowCompositionAttribute
         DwmSetWindowAttribute = dwm.DwmSetWindowAttribute 
+        DwmExtendFrameIntoClientArea = dwm.DwmExtendFrameIntoClientArea
 
         Acp = AccentPolicy()
         Acp.GradientColor = int("00cccccc", base=16)
         Acp.AccentState = 5
+        Acp.AccentPolicy = 19
 
         Wca = WindowCompositionAttribute()
         Wca.Attribute = 19
         Wca.SizeOfData = ctypes.sizeof(Acp)
         Wca.Data = ctypes.cast(ctypes.pointer(Acp), ctypes.POINTER(ctypes.c_int))
+
+        Mrg = _MARGINS()
+        Mrg.cxLeftWidth = -1
+        Mrg.cxRightWidth = -1
+        Mrg.cyTopHeight = -1
+        Mrg.cyBottomHeight = -1
         
-        SetWindowCompositionAttribute(HWND, Wca)
+        o = DwmExtendFrameIntoClientArea(HWND, Mrg)
+        if o != 0:
+            print("Win32mica: Failed to DwmExtendFrameIntoClientArea", o)
+        o = SetWindowCompositionAttribute(HWND, Wca)
+        if o != 0:
+            print("Win32mica: Failed to SetWindowCompositionAttribute", o)
         
         if ColorMode == MICAMODE.DARK:
             Wca.Attribute = 26
-            SetWindowCompositionAttribute(HWND, Wca)
+            o = SetWindowCompositionAttribute(HWND, Wca)
+            if o != 0:
+                print("Win32mica: Failed to SetWindowCompositionAttribute (dark mode)", o)
 
         if sys.getwindowsversion().build < 22523: # If mica is not a public API
             return DwmSetWindowAttribute(HWND, DWM_UNDOCUMENTED_MICA_ENTRY, ctypes.byref(ctypes.c_int(DWM_UNDOCUMENTED_MICA_VALUE)), ctypes.sizeof(ctypes.c_int))
@@ -64,3 +86,6 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
     else:
         print(f"Win32Mica Error: {sys.platform} version {sys.getwindowsversion().build} is not supported")
         return 0x32
+
+
+ApplyMica(1181804, MICAMODE.DARK)
