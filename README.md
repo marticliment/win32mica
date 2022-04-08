@@ -42,18 +42,24 @@ mode = darkdetect.isDark()
 win32mica.ApplyMica(hwnd, mode)
 ```
 
+You can check out the [examples folder](https://github.com/martinet101/win32mica/tree/main/examples) for detailed use in Tk and PySide/PyQt.
+
 ## Result:
 
 ![Demo](https://github.com/martinet101/pymica/blob/main/img/demo.png?raw=true)<br>
 _This is a PySide2 window with custom transparent widgets. The screenshot has been taken on dark mode._
 
 
-* A window with transparent background means a window where the background widget is transparent. The window must also have, in the case of Qt, those flags enabled:
+## Troubleshooting:
+
+For more information about possible errors/mistakes, make sure to add the following before using win32mica:
+
+
 ```
-qtwindow.setAttribute(Qt.WA_TranslucentBackground)
-if QtWin.isCompositionEnabled():
-    QtWin.extendFrameIntoClientArea(qtwindow, -1, -1, -1, -1)
-else:
-    QtWin.resetExtendedFrame(qtwindow)
-``` 
-Other approaches might need to be made for other GUI toolkits to work
+
+import win32mica
+win32mica.debugging = True
+
+ApplyMica(...)
+
+```
