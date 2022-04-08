@@ -5,6 +5,9 @@ class MICAMODE():
     LIGHT = False
 
 
+debugging = False
+
+
 def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
     """Apply the new mica effect on a window making use of the hidden win32api and return an integer depending on the result of the operation
     
@@ -60,24 +63,32 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
         Wca.SizeOfData = ctypes.sizeof(Acp)
         Wca.Data = ctypes.cast(ctypes.pointer(Acp), ctypes.POINTER(ctypes.c_int))
 
-        Mrg = _MARGINS()
-        Mrg.cxLeftWidth = -1
-        Mrg.cxRightWidth = -1
-        Mrg.cyTopHeight = -1
-        Mrg.cyBottomHeight = -1
+        Mrg = _MARGINS(-1, -1, -1, -1)
         
-        o = DwmExtendFrameIntoClientArea(HWND, Mrg)
-        if o != 0:
-            print("Win32mica: Failed to DwmExtendFrameIntoClientArea", o)
+        o = DwmExtendFrameIntoClientArea(HWND, ctypes.byref(Mrg))
+        if debugging:
+            if o != 0:
+                print("Win32mica: Failed to DwmExtendFrameIntoClientArea", hex(o+0xffffffff))
+            else:
+                print("Win32mica: DwmExtendFrameIntoClientArea Ok")
         o = SetWindowCompositionAttribute(HWND, Wca)
-        if o != 0:
-            print("Win32mica: Failed to SetWindowCompositionAttribute", o)
+        if debugging:
+            if o != 0:
+                print("Win32mica: Failed to SetWindowCompositionAttribute", o)
+            else:
+                print("Win32mica: SetWindowCompositionAttribute Ok")
         
         if ColorMode == MICAMODE.DARK:
             Wca.Attribute = 26
             o = SetWindowCompositionAttribute(HWND, Wca)
-            if o != 0:
-                print("Win32mica: Failed to SetWindowCompositionAttribute (dark mode)", o)
+            if debugging:
+                if o != 0:
+                    print("Win32mica: Failed to SetWindowCompositionAttribute (dark mode)", o)
+                else:
+                    print("Win32mica: SetWindowCompositionAttribute OK (dark mode)", o)
+        else:
+            if debugging:
+                print("Win32mica: SetWindowCompositionAttribute OFF (light mode)")
 
         if sys.getwindowsversion().build < 22523: # If mica is not a public API
             return DwmSetWindowAttribute(HWND, DWM_UNDOCUMENTED_MICA_ENTRY, ctypes.byref(ctypes.c_int(DWM_UNDOCUMENTED_MICA_VALUE)), ctypes.sizeof(ctypes.c_int))
