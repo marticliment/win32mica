@@ -3,10 +3,9 @@ import tkinter as tk
 from ctypes import windll
 try:
     import win32mica as mc
-    from PySide2 import QtWidgets, QtCore
 except ImportError:
     import os
-    os.system("pip install win32mica PySide2")
+    os.system("pip install win32mica")
 
 
 app=tk.Tk()
