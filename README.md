@@ -46,8 +46,10 @@ You can check out the [examples folder](https://github.com/martinet101/win32mica
 
 ## Result:
 
-![Demo](https://github.com/martinet101/pymica/blob/main/img/demo.png?raw=true)<br>
-_This is a PySide2 window with custom transparent widgets. The screenshot has been taken on dark mode._
+![image](https://user-images.githubusercontent.com/53119851/188261331-15e17447-590f-452a-be62-07c67a3db673.png)<br>
+![image](https://user-images.githubusercontent.com/53119851/188261398-83f5d904-586f-47ce-b6af-d4521eb3f68f.png)
+
+_Those are PySide2 windows with custom widgets._
 
 
 ## Troubleshooting:
@@ -60,6 +62,6 @@ For more information about possible errors/mistakes, make sure to add the follow
 import win32mica
 win32mica.debugging = True
 
-ApplyMica(...)
+win32mica.ApplyMica(...)
 
 ```
