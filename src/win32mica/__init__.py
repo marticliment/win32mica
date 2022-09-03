@@ -47,6 +47,7 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
         
         DWM_DOCUMENTED_MICA_ENTRY = 38     # Documented MICA (Windows 11 22523+)
         DWM_DOCUMENTED_MICA_VALUE = 0x02   # Documented MICA (Windows 11 22523+)
+        DWMW_DOCUMENTED_USE_IMMERSIVE_DARK_MODE = 20
 
 
         SetWindowCompositionAttribute = user32.SetWindowCompositionAttribute
@@ -88,11 +89,16 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
                     print("Win32mica: SetWindowCompositionAttribute OK (dark mode)", o)
         else:
             if debugging:
-                print("Win32mica: SetWindowCompositionAttribute OFF (light mode)")
+                print("Win32mica: No SetWindowCompositionAttribute (light mode)")
+
 
         if sys.getwindowsversion().build < 22523: # If mica is not a public API
             return DwmSetWindowAttribute(HWND, DWM_UNDOCUMENTED_MICA_ENTRY, ctypes.byref(ctypes.c_int(DWM_UNDOCUMENTED_MICA_VALUE)), ctypes.sizeof(ctypes.c_int))
         else: # If mica is present in the public API
+            if ColorMode == True: # Apply dark mode
+                DwmSetWindowAttribute(HWND, DWMW_DOCUMENTED_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x01)), ctypes.sizeof(ctypes.c_int))
+            else: # Apply light mode
+                DwmSetWindowAttribute(HWND, DWMW_DOCUMENTED_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x00)), ctypes.sizeof(ctypes.c_int))   
             return DwmSetWindowAttribute(HWND, DWM_DOCUMENTED_MICA_ENTRY, ctypes.byref(ctypes.c_int(DWM_DOCUMENTED_MICA_VALUE)), ctypes.sizeof(ctypes.c_int))    
     else:
         print(f"Win32Mica Error: {sys.platform} version {sys.getwindowsversion().build} is not supported")
