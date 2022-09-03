@@ -4,7 +4,7 @@
 ![](https://img.shields.io/pypi/l/win32mica?style=for-the-badge)
 ![](https://img.shields.io/pypi/pyversions/win32mica?style=for-the-badge)
 ![](https://img.shields.io/pypi/dm/win32mica?style=for-the-badge)
-# Win32mica: A simple module to add the Mica effect on legacy python windows
+# Win32mica: A simple module to add the Mica effect on Python UI Windows
 The aim of this project is to apply the Mica effect on python applications made with Python, like Tkinter, PyQt/PySide, WxPython, Kivy, etc.<br> This will work on any windows version, including the new released dev builds where the mica API is public.
 
 View this project on [PyPi](https://pypi.org/project/win32mica/)
