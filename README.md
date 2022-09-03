@@ -36,7 +36,7 @@ mode = MICAMODE.DARK  # Dark mode mica effect
 mode = MICAMODE.LIGHT # Light mode mica effect
 # Choose one of them following your app color scheme
 
-import darkdetect # Auto mode detect
+import darkdetect # You can pass the darkdetect return value directly, since the ColorMode accepts bool values (True -> dark, False -> light)
 mode = darkdetect.isDark()
 
 win32mica.ApplyMica(hwnd, mode)
