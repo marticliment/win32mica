@@ -25,6 +25,12 @@ python -m pip install win32mica
 ## Usage:
 
 ```python
+#####################################################################
+#                                                                   #
+# Those examples are oversimplified, please see the examples folder #
+# for detailed usage with each UI library.                          #
+#                                                                   #
+#####################################################################
 
 hwnd = qtwindow.winId().__int__() # On a PyQt/PySide window
 hwnd = tkwindow.frame() # On a tkinter window
@@ -57,11 +63,8 @@ _Those are PySide2 windows with custom widgets._
 For more information about possible errors/mistakes, make sure to add the following before using win32mica:
 
 
-```
-
+```python
+# Add these lines at the very start of your script
 import win32mica
 win32mica.debugging = True
-
-win32mica.ApplyMica(...)
-
 ```

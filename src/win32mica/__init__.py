@@ -15,7 +15,10 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
     HWND -- a handle to a window (it being an integer value)
     ColorMode -- MICAMODE.DARK or MICAMODE.LIGHT, depending on the preferred UI theme. A boolean value can also be passed, True meaning Dark and False meaning Light
     """
-    HWND = int(HWND)
+    try:
+        HWND = int(HWND)
+    except ValueError:
+        HWND = int(str(HWND), 16)
     
     if sys.platform == "win32" and sys.getwindowsversion().build >= 22000:
         user32 = ctypes.windll.user32
