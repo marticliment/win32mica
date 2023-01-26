@@ -5,18 +5,18 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="win32mica",
-    version="1.7",
+    version="1.8",
     author="Martí Climent",
     author_email="marticlilop@gmail.com",
-    description="Apply mica background to Windows 11 Win32 apps made with python, such as Tkinter or PyQt/PySide apps",
+    description="Apply mica background (if supported) and immersive dark mode to Windows 11 Win32 apps made with python, such as Tkinter or PyQt/PySide apps",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/martinet101/win32mica",
+    url="https://github.com/marticliment/win32mica",
     project_urls={
-        "Bug Tracker": "https://github.com/martinet101/win32mica/issues",
+        "Bug Tracker": "https://github.com/marticliment/win32mica/issues",
     },
     classifiers=[
-          'Intended Audience :: Developers',
+        'Intended Audience :: Developers',
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: Microsoft :: Windows",

@@ -4,8 +4,8 @@
 ![](https://img.shields.io/pypi/l/win32mica?style=for-the-badge)
 ![](https://img.shields.io/pypi/pyversions/win32mica?style=for-the-badge)
 ![](https://img.shields.io/pypi/dm/win32mica?style=for-the-badge)
-# Win32mica: A simple module to add the Mica effect on Python UI Windows
-The aim of this project is to apply the Mica effect on python applications made with Python, like Tkinter, PyQt/PySide, WxPython, Kivy, etc.<br> This will work on any windows version, including the new released dev builds where the mica API is public.
+# Win32mica: A simple module to add the Mica effect and enable immersive dark mode on Python UI Windows
+The aim of this project is to apply the Mica effect and enable immersive dark mode on python applications made with Python, like Tkinter, PyQt/PySide, WxPython, Kivy, etc.<br> This will work on any windows version, including the new released dev builds where the mica API is public.
 
 View this project on [PyPi](https://pypi.org/project/win32mica/)
 View this project on [GitHub](https://github.com/martinet101/win32mica)
@@ -46,6 +46,9 @@ import darkdetect # You can pass the darkdetect return value directly, since the
 mode = darkdetect.isDark()
 
 win32mica.ApplyMica(hwnd, mode)
+# Will return 0x32 if the system does not support Mica textures (Windows 10 or less). Immersive dark mode will still be applied (if selected theme is MICAMODE.DARK)
+# Will return 0x00 if mica is applied successfully
+# If DwmSetWindowAttribute fails, the output code will be returned 
 ```
 
 You can check out the [examples folder](https://github.com/martinet101/win32mica/tree/main/examples) for detailed use in Tk and PySide/PyQt.

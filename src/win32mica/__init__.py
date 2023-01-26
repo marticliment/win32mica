@@ -20,43 +20,50 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
     except ValueError:
         HWND = int(str(HWND), 16)
     
+    user32 = ctypes.windll.user32
+    dwm = ctypes.windll.dwmapi
+
+    class AccentPolicy(ctypes.Structure):
+        _fields_ = [
+            ("AccentState", ctypes.c_uint),
+            ("AccentFlags", ctypes.c_uint),
+            ("GradientColor", ctypes.c_uint),
+            ("AnimationId", ctypes.c_uint)
+        ]
+
+    class WindowCompositionAttribute(ctypes.Structure):
+        _fields_ = [
+            ("Attribute", ctypes.c_int),
+            ("Data", ctypes.POINTER(ctypes.c_int)),
+            ("SizeOfData", ctypes.c_size_t)
+        ]
+
+    class _MARGINS(ctypes.Structure):
+        _fields_ = [("cxLeftWidth", ctypes.c_int),
+                    ("cxRightWidth", ctypes.c_int),
+                    ("cyTopHeight", ctypes.c_int),
+                    ("cyBottomHeight", ctypes.c_int)
+                    ]
+
+    DWM_UNDOCUMENTED_MICA_ENTRY = 1029 # Undocumented MICA (Windows 11 22523-)
+    DWM_UNDOCUMENTED_MICA_VALUE = 0x01 # Undocumented MICA (Windows 11 22523-)
+    
+    DWM_DOCUMENTED_MICA_ENTRY = 38     # Documented MICA (Windows 11 22523+)
+    DWM_DOCUMENTED_MICA_VALUE = 0x02   # Documented MICA (Windows 11 22523+)
+    DWMW_USE_IMMERSIVE_DARK_MODE = 20
+    
+
+    SetWindowCompositionAttribute = user32.SetWindowCompositionAttribute
+    DwmSetWindowAttribute = dwm.DwmSetWindowAttribute 
+    DwmExtendFrameIntoClientArea = dwm.DwmExtendFrameIntoClientArea
+
+    if ColorMode == MICAMODE.DARK: # Apply dark mode
+        DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x01)), ctypes.sizeof(ctypes.c_int))
+    else: # Apply light mode
+        DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x00)), ctypes.sizeof(ctypes.c_int)) 
+
+
     if sys.platform == "win32" and sys.getwindowsversion().build >= 22000:
-        user32 = ctypes.windll.user32
-        dwm = ctypes.windll.dwmapi
-
-        class AccentPolicy(ctypes.Structure):
-            _fields_ = [
-                ("AccentState", ctypes.c_uint),
-                ("AccentFlags", ctypes.c_uint),
-                ("GradientColor", ctypes.c_uint),
-                ("AnimationId", ctypes.c_uint)
-            ]
-
-        class WindowCompositionAttribute(ctypes.Structure):
-            _fields_ = [
-                ("Attribute", ctypes.c_int),
-                ("Data", ctypes.POINTER(ctypes.c_int)),
-                ("SizeOfData", ctypes.c_size_t)
-            ]
-
-        class _MARGINS(ctypes.Structure):
-            _fields_ = [("cxLeftWidth", ctypes.c_int),
-                        ("cxRightWidth", ctypes.c_int),
-                        ("cyTopHeight", ctypes.c_int),
-                        ("cyBottomHeight", ctypes.c_int)
-                        ]
-
-        DWM_UNDOCUMENTED_MICA_ENTRY = 1029 # Undocumented MICA (Windows 11 22523-)
-        DWM_UNDOCUMENTED_MICA_VALUE = 0x01 # Undocumented MICA (Windows 11 22523-)
-        
-        DWM_DOCUMENTED_MICA_ENTRY = 38     # Documented MICA (Windows 11 22523+)
-        DWM_DOCUMENTED_MICA_VALUE = 0x02   # Documented MICA (Windows 11 22523+)
-        DWMW_USE_IMMERSIVE_DARK_MODE = 20
-
-
-        SetWindowCompositionAttribute = user32.SetWindowCompositionAttribute
-        DwmSetWindowAttribute = dwm.DwmSetWindowAttribute 
-        DwmExtendFrameIntoClientArea = dwm.DwmExtendFrameIntoClientArea
 
         Acp = AccentPolicy()
         Acp.GradientColor = int("00cccccc", base=16)
@@ -95,12 +102,6 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
             if debugging:
                 print("Win32mica: No SetWindowCompositionAttribute (light mode)")
 
-        
-        if ColorMode == True: # Apply dark mode
-            DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x01)), ctypes.sizeof(ctypes.c_int))
-        else: # Apply light mode
-            DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x00)), ctypes.sizeof(ctypes.c_int)) 
-
         if sys.getwindowsversion().build < 22523: # If mica is not a public API
             return DwmSetWindowAttribute(HWND, DWM_UNDOCUMENTED_MICA_ENTRY, ctypes.byref(ctypes.c_int(DWM_UNDOCUMENTED_MICA_VALUE)), ctypes.sizeof(ctypes.c_int))
         else: # If mica is present in the public API
@@ -110,4 +111,3 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
         return 0x32
 
 
-ApplyMica(1181804, MICAMODE.DARK)
