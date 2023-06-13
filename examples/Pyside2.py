@@ -2,7 +2,7 @@ import ctypes
 
 try:
     import win32mica as mc
-    from PySide2 import QtWidgets, QtCore
+    from PySide6 import QtWidgets, QtCore
 except ImportError:
     import os
     os.system("pip install win32mica PySide2")
