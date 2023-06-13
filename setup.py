@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="win32mica",
-    version="1.8",
+    version="1.9",
     author="Martí Climent",
     author_email="marticlilop@gmail.com",
     description="Apply mica background (if supported) and immersive dark mode to Windows 11 Win32 apps made with python, such as Tkinter or PyQt/PySide apps",
