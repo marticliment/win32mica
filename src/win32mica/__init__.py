@@ -1,4 +1,4 @@
-import ctypes, sys
+import ctypes, sys, threading, time, winreg
 
 class MICAMODE():
     DARK = True
@@ -7,8 +7,30 @@ class MICAMODE():
 
 debugging = False
 
+def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
+    registry = winreg.ConnectRegistry(None, storage)
+    reg_keypath = aKey
+    try:
+        reg_key = winreg.OpenKey(registry, reg_keypath)
+    except FileNotFoundError as e:
+        return default
+    except Exception as e:
+        print(e)
+        return default
 
-def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
+    for i in range(1024):
+        try:
+            value_name, value, _ = winreg.EnumValue(reg_key, i)
+            if value_name == sKey:
+                return value
+        except OSError as e:
+            return default
+        except Exception as e:
+            print(e)
+            return default
+
+
+def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT, darkModeMode: int = 20) -> int:
     """Apply the new mica effect on a window making use of the hidden win32api and return an integer depending on the result of the operation
     
     Keyword arguments:
@@ -58,7 +80,26 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
     DwmExtendFrameIntoClientArea = dwm.DwmExtendFrameIntoClientArea
 
     if ColorMode == MICAMODE.DARK: # Apply dark mode
-        DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x01)), ctypes.sizeof(ctypes.c_int))
+        def setMode():
+            oldMode = -1
+            while True:
+                mode = readRegedit(r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 0)
+                if oldMode != mode:
+                    oldMode = mode
+                    DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x01)), ctypes.sizeof(ctypes.c_int))
+                    time.sleep(0.5)
+                    DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x01)), ctypes.sizeof(ctypes.c_int))
+                    time.sleep(0.5)
+                    DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x01)), ctypes.sizeof(ctypes.c_int))
+                    time.sleep(0.5)
+                    DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x01)), ctypes.sizeof(ctypes.c_int))
+                    time.sleep(0.5)
+                time.sleep(0.1)
+                    
+
+
+        threading.Thread(target=setMode, daemon=True, name="win32mica: ensure dark mode").start()
+        
     else: # Apply light mode
         DwmSetWindowAttribute(HWND, DWMW_USE_IMMERSIVE_DARK_MODE, ctypes.byref(ctypes.c_int(0x00)), ctypes.sizeof(ctypes.c_int)) 
 
@@ -71,7 +112,7 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
         Acp.AccentPolicy = 19
 
         Wca = WindowCompositionAttribute()
-        Wca.Attribute = 19
+        Wca.Attribute = 20
         Wca.SizeOfData = ctypes.sizeof(Acp)
         Wca.Data = ctypes.cast(ctypes.pointer(Acp), ctypes.POINTER(ctypes.c_int))
 
@@ -91,7 +132,7 @@ def ApplyMica(HWND: int, ColorMode: bool = MICAMODE.LIGHT) -> int:
                 print("Win32mica: SetWindowCompositionAttribute Ok")
         
         if ColorMode == MICAMODE.DARK:
-            Wca.Attribute = 26
+            Wca.Attribute = 1
             o = SetWindowCompositionAttribute(HWND, Wca)
             if debugging:
                 if o != 0:
