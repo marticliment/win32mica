@@ -18,7 +18,7 @@ python -m pip install win32mica
 ## Requirements:
  - Windows 11
  - A window set to not have a transparent background and to have extended composition enabled* (It might work with other settings, but nothing is guaranteed.)
- - The HWND (identifier) of that window. More info: [what is a hwnd?](https://stackoverflow.com/questions/1635645/what-is-hwnd-in-vc) 
+ - The hWnd (identifier) of that window. More info: [what is a hWnd?](https://stackoverflow.com/questions/1635645/what-is-hwnd-in-vc) 
  - OPTIONAL: The window must have semi-transparent widgets/controls in order to recreate the transparency effect on the controls.
  - OPTIONAL: Know if Windows has dark or light mode enabled. This can be checked with the [`darkdetect` module](https://pypi.org/project/darkdetect/)
 
@@ -36,19 +36,23 @@ hwnd = qtwindow.winId().__int__() # On a PyQt/PySide window
 hwnd = tkwindow.frame() # On a tkinter window
 # You'll need to adjust this to your program
 
-from win32mica import MICAMODE, ApplyMica
+from win32mica import MicaMode, ApplyMica
 
-mode = MICAMODE.DARK  # Dark mode mica effect
-mode = MICAMODE.LIGHT # Light mode mica effect
+mode = MicaMode.DARK  # Dark mode mica effect
+mode = MicaMode.LIGHT # Light mode mica effect
+mode = MicaMode.AUTO # Apply system theme, and change it if system theme changes
 # Choose one of them following your app color scheme
 
-import darkdetect # You can pass the darkdetect return value directly, since the ColorMode accepts bool values (True -> dark, False -> light)
-mode = darkdetect.isDark()
+def callbackFunction():
+    print("Theme has changed!")
 
-win32mica.ApplyMica(hwnd, mode)
-# Will return 0x32 if the system does not support Mica textures (Windows 10 or less). Immersive dark mode will still be applied (if selected theme is MICAMODE.DARK)
-# Will return 0x00 if mica is applied successfully
-# If DwmSetWindowAttribute fails, the output code will be returned 
+win32mica.ApplyMica(HWND=hwnd, ColorMode=mode, onThemeChange=callbackFunction)
+
+# Function arguments:
+#    HWND -- a handle to a window (it being an integer value)
+#    ColorMode -- MicaMode.DARK or MicaMode.LIGHT, depending on the preferred UI theme. A boolean value can also be passed, True meaning Dark and False meaning Light
+#    onThemeChange -- a function without arguments that will be called when the system theme changes. This parameter is effective only if the theme is set to MicaMode.AUTO
+
 ```
 
 You can check out the [examples folder](https://github.com/martinet101/win32mica/tree/main/examples) for detailed use in Tk and PySide/PyQt.
@@ -60,14 +64,3 @@ You can check out the [examples folder](https://github.com/martinet101/win32mica
 
 _Those are PySide2 windows with custom widgets._
 
-
-## Troubleshooting:
-
-For more information about possible errors/mistakes, make sure to add the following before using win32mica:
-
-
-```python
-# Add these lines at the very start of your script
-import win32mica
-win32mica.debugging = True
-```
