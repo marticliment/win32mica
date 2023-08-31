@@ -25,33 +25,43 @@ python -m pip install win32mica
 ## Usage:
 
 ```python
-#####################################################################
-#                                                                   #
-# Those examples are oversimplified, please see the examples folder #
-# for detailed usage with each UI library.                          #
-#                                                                   #
-#####################################################################
+######################################################################
+#                                                                    #
+# Those examples are oversimplified, please see the examples/ folder #
+# for detailed usage with each UI library.                           #
+#                                                                    #
+######################################################################
 
-hwnd = qtwindow.winId().__int__() # On a PyQt/PySide window
-hwnd = tkwindow.frame() # On a tkinter window
-# You'll need to adjust this to your program
+hwnd = window.winId().__int__() # Get the hWnd of your window
 
-from win32mica import MicaMode, ApplyMica
+from win32mica import ApplyMica, MicaTheme, MicaStyle
 
-mode = MicaMode.DARK  # Dark mode mica effect
-mode = MicaMode.LIGHT # Light mode mica effect
-mode = MicaMode.AUTO # Apply system theme, and change it if system theme changes
-# Choose one of them following your app color scheme
+mode = MicaTheme.DARK  # Dark mode mica effect
+mode = MicaTheme.LIGHT # Light mode mica effect
+mode = MicaTheme.AUTO  # Apply system theme, and change it if system theme changes
 
-def callbackFunction():
-    print("Theme has changed!")
+style = MicaStyle.DEFAULT # Default backdrop effect
+style = MicaStyle.ALT     # Alt backdrop effect
 
-win32mica.ApplyMica(HWND=hwnd, ColorMode=mode, onThemeChange=callbackFunction)
+def callbackFunction(NewTheme):
+    if newTheme == MicaTheme.DARK:
+        print("Theme has changed to dark!")
+    else:
+        print("Theme has changed to light!")
 
-# Function arguments:
-#    HWND -- a handle to a window (it being an integer value)
-#    ColorMode -- MicaMode.DARK or MicaMode.LIGHT, depending on the preferred UI theme. A boolean value can also be passed, True meaning Dark and False meaning Light
-#    onThemeChange -- a function without arguments that will be called when the system theme changes. This parameter is effective only if the theme is set to MicaMode.AUTO
+win32mica.ApplyMica(HWND=hwnd, Theme=mode, Style=style, OnThemeChange=callbackFunction)
+
+#    Parameters
+#    ----------
+#    HWND : int
+#        The handle to the window on which the effect has to be applied
+#    Theme : MicaTheme, int
+#        The theme of the backdrop effect: MicaTheme.DARK, MicaTheme.LIGHT, MicaTheme.AUTO
+#    Style : MicaStyle, int
+#        The style of the mica backdrop effect: MicaStyle.DEFAULT, MicaStyle.ALT
+#    OnThemeChange : function
+#        A callback function that receives one parameter to call when the system theme changes (will only work if Theme is set to MicaTheme.AUTO)
+#        The passed parameter will be either MicaTheme.DARK or MicaTheme.LIGHT, corresponding to the new system theme
 
 ```
 
