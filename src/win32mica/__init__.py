@@ -28,7 +28,7 @@ def __read_registry(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
             print(e)
             return default
 
-def __null_function() -> None:
+def __null_function(NewTheme) -> None:
     pass
 
 def ApplyMica(
@@ -48,7 +48,8 @@ def ApplyMica(
     Style : MicaStyle, int
         The style of the mica backdrop effect: MicaStyle.DEFAULT, MicaStyle.ALT
     OnThemeChange : function
-        A callback function to call when the system theme changes (will only work if Theme is set to MicaTheme.AUTO)
+        A callback function that receives one parameter to call when the system theme changes (will only work if Theme is set to MicaTheme.AUTO)
+        The passed parameter will be either MicaTheme.DARK or MicaTheme.LIGHT, corresponding to the new system theme
 
     Returns
     -------
@@ -126,7 +127,7 @@ def ApplyMica(
                     else:
                         ThemeToSet = 0x00 if CurrentTheme != 0 else 0x01
                         try:
-                            OnThemeChange()
+                            OnThemeChange(ThemeToSet)
                         except:
                             pass
                     DwmSetWindowAttribute(
@@ -165,7 +166,8 @@ def ApplyMica(
             THEME = 0x01
         elif Theme == MicaTheme.AUTO:
             THEME = 0x02
-            threading.Thread(target=__apply_theme, daemon=True, name="Win32mica helper").start()
+        
+        threading.Thread(target=__apply_theme, daemon=True, name="Win32mica helper").start()
 
         if sys.platform == "win32" and sys.getwindowsversion().build >= 22000:
             Acp = AccentPolicy()
