@@ -1,11 +1,7 @@
 import ctypes
 
-try:
-    from win32mica import ApplyMica, MicaTheme, MicaStyle
-    from PySide6 import QtWidgets, QtCore
-except ImportError:
-    import os
-    os.system("pip install win32mica PySide6")
+from win32mica import ApplyMica, MicaTheme, MicaStyle
+from PySide6 import QtWidgets, QtCore
 
 root = QtWidgets.QApplication()
 app = QtWidgets.QMainWindow()
