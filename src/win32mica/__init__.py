@@ -1,21 +1,13 @@
-import ctypes, sys, threading, time, winreg
+import ctypes
+import sys
+import threading
+import time
+import winreg
 
+import MicaTheme
+import MicaStyle
 
-class MICATHEME:
-    DARK = 1
-    LIGHT = 0
-    AUTO = 2
-
-
-class MICATYPE:
-    ALT = 1
-    DEFAULT = 0
-
-
-debugging = False
-
-
-def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
+def __read_registry(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
     reg_keypath = aKey
     try:
@@ -25,7 +17,6 @@ def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     except Exception as e:
         print(e)
         return default
-
     for i in range(1024):
         try:
             value_name, value, _ = winreg.EnumValue(reg_key, i)
@@ -37,28 +28,41 @@ def readRegedit(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
             print(e)
             return default
 
-
-def nullFunction():
+def __null_function() -> None:
     pass
 
-
 def ApplyMica(
-    HWND: int,
-    ColorMode: bool = MICATHEME.LIGHT,
-    MicaType: bool = MICATYPE.DEFAULT,
-    onThemeChange=nullFunction,
-) -> int:
-    """
-    Apply the new mica effect on a window making use of the hidden win32api and return an integer depending on the result of the operation
+        HWND: int,
+        Theme: bool = MicaTheme.LIGHT,
+        Style: bool = MicaStyle.DEFAULT,
+        OnThemeChange = __null_function,
+    ) -> int:
+    """Applies the mica backdrop effect on a specific hWnd
 
-    Keyword arguments:
-    HWND -- a handle to a window (it being an integer value)
-    ColorMode -- MICATHEME.DARK or MICATHEME.LIGHT, depending on the preferred UI theme.
-        A boolean value can also be passed, True meaning Dark and False meaning Light
-    MicaType -- MICATYPE.DEFAULT or MICATYPE.ALT, choose to apply the default mica or the mica alt.
-        A boolean value can also be passed, True meaning ALT and False meaning DEFAULT
-    onThemeChange -- a function to call when the system theme changes. Will be called only if ColorMode is set to MICATHEME.AUTO
+    Parameters
+    ----------
+    HWND : int
+        The handle to the window on which the effect has to be applied
+    Theme : MicaTheme, int
+        The theme of the backdrop effect: MicaTheme.DARK, MicaTheme.LIGHT, MicaTheme.AUTO
+    Style : MicaStyle, int
+        The style of the mica backdrop effect: MicaStyle.DEFAULT, MicaStyle.ALT
+    OnThemeChange : function
+        A callback function to call when the system theme changes (will only work if Theme is set to MicaTheme.AUTO)
+
+    Returns
+    -------
+    int
+        the integer result of the win32 api call to apply the mica backdrop effect. This value will equal to 0x32 if the system is not compatible with the mica backdrop
     """
+
+    if HWND == 0:
+        raise ValueError("The parameter HWND cannot be zero")
+    if Theme not in (MicaTheme.DARK, MicaTheme.LIGHT, MicaTheme.AUTO):
+        raise ValueError("The parameter ColorMode has an invalid value")
+    if Style not in (MicaStyle.DEFAULT, MicaStyle.ALT):
+        raise ValueError("The parameter Style has an invalid value")
+    
     try:
         try:
             HWND = int(HWND)
@@ -91,84 +95,77 @@ def ApplyMica(
                 ("cyBottomHeight", ctypes.c_int),
             ]
 
-        DWM_UNDOCUMENTED_MICA_ENTRY = 1029  # Undocumented MICA (Windows 11 22523-)
-        DWM_UNDOCUMENTED_MICA_VALUE = (
-            0x01 if MicaType == MICATYPE.DEFAULT else 0x04
-        )  # Undocumented MICA (Windows 11 22523-)
+        DWM_UNDOCUMENTED_MICA_ENTRY = 1029  
+        DWM_UNDOCUMENTED_MICA_VALUE = 0x01 if Style == MicaStyle.DEFAULT else 0x04
 
-        DWM_DOCUMENTED_MICA_ENTRY = 38  # Documented MICA (Windows 11 22523+)
-        DWM_DOCUMENTED_MICA_VALUE = (
-            0x02 if MicaType == MICATYPE.DEFAULT else 0x04
-        )  # Documented MICA (Windows 11 22523+)
+        DWM_DOCUMENTED_MICA_ENTRY = 38
+        DWM_DOCUMENTED_MICA_VALUE = 0x02 if Style == MicaStyle.DEFAULT else 0x04
         DWMW_USE_IMMERSIVE_DARK_MODE = 20
 
         SetWindowCompositionAttribute = user32.SetWindowCompositionAttribute
         DwmSetWindowAttribute = dwm.DwmSetWindowAttribute
         DwmExtendFrameIntoClientArea = dwm.DwmExtendFrameIntoClientArea
 
-        MODE = 0x00
+        THEME = 0x00
 
-        def setMode():
-            nonlocal MODE
-            OldMode = -1
+        def __apply_theme():
+            nonlocal THEME
+            OldTheme = -1
             while True:
-                CurrentMode = readRegedit(
+                CurrentTheme = __read_registry(
                     r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
                     "AppsUseLightTheme",
                     0,
                 )
-                if OldMode != CurrentMode:
-                    OldMode = CurrentMode
-                    if MODE == 0x01:
-                        ModeToSet = 0x01
-                    elif MODE == 0x00:
-                        ModeToSet = 0x00
+                if OldTheme != CurrentTheme:
+                    OldTheme = CurrentTheme
+                    if THEME == 0x01:
+                        ThemeToSet = 0x01
+                    elif THEME == 0x00:
+                        ThemeToSet = 0x00
                     else:
-                        ModeToSet = 0x00 if CurrentMode != 0 else 0x01
+                        ThemeToSet = 0x00 if CurrentTheme != 0 else 0x01
                         try:
-                            onThemeChange()
+                            OnThemeChange()
                         except:
                             pass
                     DwmSetWindowAttribute(
                         HWND,
                         DWMW_USE_IMMERSIVE_DARK_MODE,
-                        ctypes.byref(ctypes.c_int(ModeToSet)),
+                        ctypes.byref(ctypes.c_int(ThemeToSet)),
                         ctypes.sizeof(ctypes.c_int),
                     )
                     time.sleep(0.5)
                     DwmSetWindowAttribute(
                         HWND,
                         DWMW_USE_IMMERSIVE_DARK_MODE,
-                        ctypes.byref(ctypes.c_int(ModeToSet)),
+                        ctypes.byref(ctypes.c_int(ThemeToSet)),
                         ctypes.sizeof(ctypes.c_int),
                     )
                     time.sleep(0.5)
                     DwmSetWindowAttribute(
                         HWND,
                         DWMW_USE_IMMERSIVE_DARK_MODE,
-                        ctypes.byref(ctypes.c_int(ModeToSet)),
+                        ctypes.byref(ctypes.c_int(ThemeToSet)),
                         ctypes.sizeof(ctypes.c_int),
                     )
                     time.sleep(0.5)
                     DwmSetWindowAttribute(
                         HWND,
                         DWMW_USE_IMMERSIVE_DARK_MODE,
-                        ctypes.byref(ctypes.c_int(ModeToSet)),
+                        ctypes.byref(ctypes.c_int(ThemeToSet)),
                         ctypes.sizeof(ctypes.c_int),
                     )
                     time.sleep(0.5)
                 time.sleep(0.1)
 
-        if ColorMode == MICATHEME.DARK:
-            MODE = 0x01
-        elif ColorMode == MICATHEME.LIGHT:
-            MODE = 0x00
-        else:  # ColorMode == MicaMode.AUTO
-            MODE = 0x02
-
-        threading.Thread(
-            target=setMode, daemon=True, name="win32mica: theme thread"
-        ).start()
+        if Theme == MicaTheme.LIGHT:
+            THEME = 0x00
+        elif Theme == MicaTheme.DARK:
+            THEME = 0x01
+        elif Theme == MicaTheme.AUTO:
+            THEME = 0x02
+            threading.Thread(target=__apply_theme, daemon=True, name="Win32mica helper").start()
 
         if sys.platform == "win32" and sys.getwindowsversion().build >= 22000:
             Acp = AccentPolicy()
