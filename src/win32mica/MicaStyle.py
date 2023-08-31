@@ -1,2 +1,0 @@
-DEFAULT = 3
-ALT = 4

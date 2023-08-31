@@ -4,8 +4,14 @@ import threading
 import time
 import winreg
 
-import MicaTheme
-import MicaStyle
+class MicaTheme:
+    LIGHT = 0
+    DARK = 1
+    AUTO = 2
+    
+class MicaStyle:
+    DEFAULT = 3
+    ALT = 4
 
 def __read_registry(aKey, sKey, default, storage=winreg.HKEY_CURRENT_USER):
     registry = winreg.ConnectRegistry(None, storage)
