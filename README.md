@@ -10,6 +10,10 @@ The aim of this project is to apply the Mica effect and enable immersive dark mo
 View this project on [PyPi](https://pypi.org/project/win32mica/)
 View this project on [GitHub](https://github.com/martinet101/win32mica)
 
+
+https://github.com/marticliment/win32mica/assets/53119851/b0c4ce98-9845-449d-94e6-caaa37fc752a
+
+
 ## Installation:
 ```pwsh
 python -m pip install win32mica
