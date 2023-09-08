@@ -65,4 +65,4 @@ app6.show()
 app6.setCentralWidget(label2)
 
 
-root.exec_()
+root.exec()
